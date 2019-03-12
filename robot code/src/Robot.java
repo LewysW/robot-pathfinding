@@ -14,7 +14,6 @@ public class Robot {
 		gui.addButton(1, 0, "RRT", this, "rrt");
 		
 		gui.addButton(1, 1, "Potential Fields", this, "potentialFields");
-		
 	}
 	
 	public void runProject() {

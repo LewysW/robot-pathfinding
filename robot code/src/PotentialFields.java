@@ -13,20 +13,20 @@ import geometry.IntPoint;
 import java.util.List;
 
 public class PotentialFields {
-	
+
 	//------------//
 	// Attributes //
 	//------------//
-	
+
 	private final EasyGui gui;
-        private  EasyGui newGUI  ; 
-        
+	private  EasyGui newGUI  ;
+
 	private final int buttonId;
-        private  int buttonIdNEW ;
-        private  int  x1newID ,   x2newID , x3newID, x4newID , x5newID;
-        private  int  y1newID ,   y2newID , y3newID, y4newID , y5newID;
-        private int  messageLabel ;  
-        
+	private  int buttonIdNEW ;
+	private  int  x1newID ,   x2newID , x3newID, x4newID , x5newID;
+	private  int  y1newID ,   y2newID , y3newID, y4newID , y5newID;
+	private int  messageLabel ;
+
 	private final int circleSId;
 	private final int circleLId;
 	private final int squareSId;
@@ -36,8 +36,8 @@ public class PotentialFields {
 	private final int easyCourseId;
 	private final int medCourseId;
 	private final int hardCourseId;
-        private final int newobsticalShape;
-        
+	private final int newobsticalShape;
+
 	private final int enMikeId;
 	private final int disMikeId;
 	private final int enArcDrawingId;
@@ -60,20 +60,26 @@ public class PotentialFields {
 	private boolean arcs;
 	private boolean mike;
 	private boolean ArcPlanner ;
-    private final int headingR  ;
+
+	/**
+	 * FRACTIONAL PROGRESS
+	 */
+	private boolean fractionalProgress;
+
+	private final int headingR  ;
 
 	static final int frameLength = 1200;
 	static final int frameHeight = 900;
 	static final int graphicsHeight = 700;
-	
+
 	private ArrayList<Renderable> obstacles;
 
 	private boolean stop;
-	
+
 	//-------------//
 	// Constructor //
 	//-------------//
-	
+
 	public PotentialFields() {
 		// Set up the GUI, labels, buttons
 		gui = new EasyGui(frameLength, frameHeight);
@@ -90,12 +96,12 @@ public class PotentialFields {
 		goalXId = gui.addTextField(0, 3, null);
 		gui.addLabel(1, 2, "Goal Y:");
 		goalYId = gui.addTextField(1, 3, null);
-        
-       
-        gui.addLabel(1, 4, "heading:");
-        headingR = gui.addTextField(1, 5, null);
-        
-        
+
+
+		gui.addLabel(1, 4, "heading:");
+		headingR = gui.addTextField(1, 5, null);
+
+
 
 		gui.addLabel(0, 4, "Goal Radius:");
 		goalRadiusId = gui.addTextField(0, 5, null);
@@ -115,9 +121,10 @@ public class PotentialFields {
 		gui.addLabel(7, 2, "Plannar: ");
 		enArcId = gui.addButton(7, 3, "Arc", this, "enableArc");
 		disArcId = gui.addButton(7, 4, "Euclidean", this, "disableArc");
+		buttonIdNEW = gui.addButton(7, 5, "Fractional Progress", this, "enableFractionalProgress");
 		gui.setButtonEnabled(disArcId, false);
 		ArcPlanner = false;
-		
+
 		// More options
 		gui.addLabel(7, 5, "Arc drawing: ");
 		enArcDrawingId = gui.addButton(7, 6, "Arcs", this, "enableArcDrawing");
@@ -139,7 +146,7 @@ public class PotentialFields {
 		easyCourseId = gui.addButton(3, 1, "Easy", this, "easyCourse");
 		medCourseId = gui.addButton(3, 2, "Medium", this, "medCourse");
 		hardCourseId = gui.addButton(3, 3, "Hard", this, "hardCourse");
-                newobsticalShape  = gui.addButton(3,4 , "5-point obstacle ", this, "newobsticalShape");   
+		newobsticalShape  = gui.addButton(3,4 , "5-point obstacle ", this, "newobsticalShape");
 
 		// Custom obstacles
 		gui.addLabel(4, 0, "Or add in your own obstacles: ");
@@ -153,34 +160,34 @@ public class PotentialFields {
 
 		gui.addButton(7, 8, "Pause", this, "pause");
 		gui.addButton(6, 8, "Quit", this, "quit");
-		
 
-//		
+
+//
 		obstacles = new ArrayList<Renderable>();
 	}
 
 	//---------//
 	// Methods //
 	//---------//
-	
+
 	// Control:
-	
+
 	public void runRobot() {
 		gui.show();
 	}
-	
+
 	public void pause() {
 		stop = !stop;
 		setButtons(stop);
 	}
-	
+
 	public void quit() {
 		gui.hide();
 		System.exit(0);
 	}
 
 	// Mike:
-	
+
 	public void enableMike() {
 		setMike(true);
 	}
@@ -194,7 +201,7 @@ public class PotentialFields {
 		gui.setButtonEnabled(enMikeId, !mike);
 		gui.setButtonEnabled(disMikeId, mike);
 	}
-	
+
 	public void enableArcDrawing() {
 		setArcDrawing(true);
 	}
@@ -208,20 +215,31 @@ public class PotentialFields {
 		gui.setButtonEnabled(enArcDrawingId, !arcs);
 		gui.setButtonEnabled(disArcDrawingId, arcs);
 	}
-	
-	
+
+
 	public void enableArc() {
 		setArcPlanner(true);
 	}
-	
+
 	public void disableArc() {
 		setArcPlanner(false);
+	}
+
+	public void enableFractionalProgress() {
+		setFractionalProgress(false);
 	}
 
 	private void setArcPlanner(boolean planar) {
 		this.ArcPlanner = planar;
 		gui.setButtonEnabled(enArcId, !planar);
 		gui.setButtonEnabled(disArcId, planar);
+	}
+
+	private void setFractionalProgress(boolean planar) {
+		this.fractionalProgress = planar;
+		gui.setButtonEnabled(buttonIdNEW, planar);
+		gui.setButtonEnabled(enArcId, false);
+		gui.setButtonEnabled(disArcId, false);
 	}
 
 	/**
@@ -240,7 +258,7 @@ public class PotentialFields {
 	}
 
 	// Pre-made courses:
-	
+
 	/**
 	 * Set up the 'easy' pre-made course
 	 */
@@ -270,75 +288,75 @@ public class PotentialFields {
 		gui.draw(obstacles);
 		gui.update();
 	}
-        
-        
-        public  void  newobsticalShape (){
-             newGUI = new EasyGui(100, 100);
-            newGUI.addLabel(0, 0, "Enter the coordinates of the five points : ");
-            
-             newGUI.addLabel(1, 0, "Point1 X  : ");
-             
-              x1newID = newGUI.addTextField(1, 1, null);
-             newGUI.addLabel(1, 2, "Point1 Y  : ");
-              y1newID = newGUI.addTextField(1, 3, null);
-             
-             newGUI.addLabel(2, 0, "Point2 X  : ");
-              x2newID = newGUI.addTextField(2, 1, null);
-             newGUI.addLabel(2, 2, "Point2 Y  : ");
-             y2newID = newGUI.addTextField(2, 3, null);
-             
-             
-             newGUI.addLabel(3, 0, "Point3 X  : ");
-              x3newID = newGUI.addTextField(3, 1, null);
-             newGUI.addLabel(3, 2, "Point3 Y  : ");
-             y3newID = newGUI.addTextField(3, 3, null);
-             
-             newGUI.addLabel(4, 0, "Point4 X  : ");
-              x4newID = newGUI.addTextField(4, 1, null);
-             newGUI.addLabel(4, 2, "Point4 Y  : ");
-             y4newID = newGUI.addTextField(4, 3, null);
-             
-             newGUI.addLabel(5, 0, "Point5 X  : ");
-              x5newID = newGUI.addTextField(5, 1, null);
-             newGUI.addLabel(5, 2, "Point5 Y  : ");
-             y5newID = newGUI.addTextField(5, 3, null);
-             
-             messageLabel =  newGUI.addLabel(6, 0, "   ");
 
-		 buttonIdNEW = newGUI.addButton(7, 1, "done", this, "createObstical");
-                 
-                 newGUI.show() ;  
-		
 
-            
-            
-        } 
-        public  static  boolean   getPoints   ( Vector []  points , String...  numberString   )
-        {
-            boolean  isNumberAll   =   true  ; 
-            
-            for  ( int  i = 0 ;   i < numberString.length-1  ;  i = i +2  )
-            {
-               
-                try{
-                   points[i/2]  = new Vector (Integer.parseInt(numberString[i])  , Integer.parseInt(numberString[i+1]));
-                    
-                }
-                    
-                catch ( Exception e  )
-                { 
-                    System.out.println(  "e" + e );
-                    return false ; 
-                }
-            }
-            
-            return isNumberAll ;  
-            
-        }
-        public void createObstical () 
-        {
-            String []   allVals  =  new String [10 ] ; 
-           allVals[0] = newGUI.getTextFieldContent(x1newID);
+	public  void  newobsticalShape (){
+		newGUI = new EasyGui(100, 100);
+		newGUI.addLabel(0, 0, "Enter the coordinates of the five points : ");
+
+		newGUI.addLabel(1, 0, "Point1 X  : ");
+
+		x1newID = newGUI.addTextField(1, 1, null);
+		newGUI.addLabel(1, 2, "Point1 Y  : ");
+		y1newID = newGUI.addTextField(1, 3, null);
+
+		newGUI.addLabel(2, 0, "Point2 X  : ");
+		x2newID = newGUI.addTextField(2, 1, null);
+		newGUI.addLabel(2, 2, "Point2 Y  : ");
+		y2newID = newGUI.addTextField(2, 3, null);
+
+
+		newGUI.addLabel(3, 0, "Point3 X  : ");
+		x3newID = newGUI.addTextField(3, 1, null);
+		newGUI.addLabel(3, 2, "Point3 Y  : ");
+		y3newID = newGUI.addTextField(3, 3, null);
+
+		newGUI.addLabel(4, 0, "Point4 X  : ");
+		x4newID = newGUI.addTextField(4, 1, null);
+		newGUI.addLabel(4, 2, "Point4 Y  : ");
+		y4newID = newGUI.addTextField(4, 3, null);
+
+		newGUI.addLabel(5, 0, "Point5 X  : ");
+		x5newID = newGUI.addTextField(5, 1, null);
+		newGUI.addLabel(5, 2, "Point5 Y  : ");
+		y5newID = newGUI.addTextField(5, 3, null);
+
+		messageLabel =  newGUI.addLabel(6, 0, "   ");
+
+		buttonIdNEW = newGUI.addButton(7, 1, "done", this, "createObstical");
+
+		newGUI.show() ;
+
+
+
+
+	}
+	public  static  boolean   getPoints   ( Vector []  points , String...  numberString   )
+	{
+		boolean  isNumberAll   =   true  ;
+
+		for  ( int  i = 0 ;   i < numberString.length-1  ;  i = i +2  )
+		{
+
+			try{
+				points[i/2]  = new Vector (Integer.parseInt(numberString[i])  , Integer.parseInt(numberString[i+1]));
+
+			}
+
+			catch ( Exception e  )
+			{
+				System.out.println(  "e" + e );
+				return false ;
+			}
+		}
+
+		return isNumberAll ;
+
+	}
+	public void createObstical ()
+	{
+		String []   allVals  =  new String [10 ] ;
+		allVals[0] = newGUI.getTextFieldContent(x1newID);
 		allVals[1] = newGUI .getTextFieldContent(y1newID);
 		allVals[2] = newGUI.getTextFieldContent(x2newID);
 		allVals[3] = newGUI.getTextFieldContent(y2newID);
@@ -346,39 +364,39 @@ public class PotentialFields {
 		allVals[5] = newGUI.getTextFieldContent(y3newID);
 		allVals[6] = newGUI.getTextFieldContent(x4newID);
 		allVals[7] = newGUI.getTextFieldContent(y4newID);
-		allVals[8]= newGUI.getTextFieldContent(x5newID); 
-                allVals[9] = newGUI.getTextFieldContent(y5newID); 
-                 Vector points  []  =  new  Vector  [ 5 ]; 
-                 
-                 boolean success  = getPoints   ( points ,allVals  );
-                 
-                 if( ! success  )
-                 {newGUI.setLabelText(messageLabel, "All Field should be integers");
-                 return ; 
-                 }
-                   
-                 
-                 RenderablePolyline line = new RenderablePolyline();
+		allVals[8]= newGUI.getTextFieldContent(x5newID);
+		allVals[9] = newGUI.getTextFieldContent(y5newID);
+		Vector points  []  =  new  Vector  [ 5 ];
+
+		boolean success  = getPoints   ( points ,allVals  );
+
+		if( ! success  )
+		{newGUI.setLabelText(messageLabel, "All Field should be integers");
+			return ;
+		}
+
+
+		RenderablePolyline line = new RenderablePolyline();
 		int[][] linePoints = { { (int)points[0].x, (int)points[0].y }, { (int)points[1].x, (int)points[1].y }, { (int)points[2].x, (int)points[2].y }, { (int)points[3].x, (int)points[3].y }, {(int) points[4].x, (int)points[4].y } };
-		for (int[] p : linePoints) 
+		for (int[] p : linePoints)
 			line.addPoint(p[0], p[1]);
-		
+
 		line.setProperties(Color.DARK_GRAY, 2f);
 		setupObstacle(line);
-                
-                newGUI.hide();
-                
-                     
-                 
-                 
-                
-                
-                
-                
-               // if (  )
-                
-                
-        }
+
+		newGUI.hide();
+
+
+
+
+
+
+
+
+		// if (  )
+
+
+	}
 	/**
 	 * Set up the 'hard' pre-made course
 	 */
@@ -402,7 +420,7 @@ public class PotentialFields {
 		line.setProperties(Color.DARK_GRAY, 2f);
 		setupObstacle(line);
 	}
-	
+
 	/**
 	 * Set up initial robot position.
 	 */
@@ -441,7 +459,7 @@ public class PotentialFields {
 	public void genCircleL() {
 		genCircle(150, 150);
 	}
-	
+
 	private void genCircle(int width, int height) {
 		IntPoint centre = randomPoint(frameLength, frameHeight);
 		RenderableOval o = new RenderableOval(centre.x, centre.y, width, height);
@@ -472,7 +490,7 @@ public class PotentialFields {
 		p.setProperties(Color.ORANGE, 2f);
 		setupObstacle(p);
 	}
-	
+
 	/**
 	 * Generate a random point in 2D space in the range ([0-maxX,], [0-maxY]) for
 	 * obstacle creation
@@ -518,15 +536,15 @@ public class PotentialFields {
 //		String powers = gui.getTextFieldContent(powerId);
 //		String boxes = gui.getTextFieldContent(boxId);
 //		String goals = gui.getTextFieldContent(goalId);
-//                
-                
-               String headingStr  =  gui.getTextFieldContent(headingR) ;
-                double  headingD   = 0.0 ; 
-               if (! headingStr.isEmpty()) 
-                headingD =  Double.parseDouble ( headingStr); 
-               gui.setTextFieldContent(headingR, "" + headingD);
-               
-		
+//
+
+		String headingStr  =  gui.getTextFieldContent(headingR) ;
+		double  headingD   = 0.0 ;
+		if (! headingStr.isEmpty())
+			headingD =  Double.parseDouble ( headingStr);
+		gui.setTextFieldContent(headingR, "" + headingD);
+
+
 		startX = getProp(startXs, rand, frameLength);
 		gui.setTextFieldContent(startXId, "" + startX);
 
@@ -574,10 +592,10 @@ public class PotentialFields {
 		else
 			robotSpeed = Integer.parseInt(robotSpeeds);
 		gui.setTextFieldContent(robotSpeedId, "" + robotSpeed);
-		
-	
+
+
 		String image = mike ? "mike.png" : null;
-	
+
 		goLittleRobot(new IntPoint(startX, startY), new IntPoint(goalX, goalY), radius, robotRadius, robotSensorRange,
 				robotSensorDensity, robotSpeed, image, /*power, goal, box,*/headingD );
 	}
@@ -585,7 +603,7 @@ public class PotentialFields {
 	/**
 	 * Set the robot moving towards a goal on the screen with set radius, step size,
 	 * etc.
-	 * 
+	 *
 	 * @param start
 	 *            The coordinates of the starting point
 	 * @param goal
@@ -602,16 +620,16 @@ public class PotentialFields {
 	 *            The number of moves per second
 	 */
 	public void goLittleRobot(IntPoint start, IntPoint goal, int goalRad, int robotRadius, int robotSensorRange,
-			int robotSensorDensity, int robotSpeed, String image,/* int power, int goalFactor, int box ,*/ double headingR) throws InterruptedException {
+							  int robotSensorDensity, int robotSpeed, String image,/* int power, int goalFactor, int box ,*/ double headingR) throws InterruptedException {
 		// Disable all buttons while robot is active TODO
 		setButtons(false);
 		stop = false;
 
 		// Create the robot, start & end points, renderables
-              
+
 		PotentialFieldsRobot rob = new PotentialFieldsRobot(image, start, goal, robotRadius, robotSensorRange,
 				robotSensorDensity, goalRad, obstacles,/* power, goalFactor, box,*/headingR);
-                
+
 		RRTree startAndGoal = new RRTree(Color.black);
 		startAndGoal.setStartAndGoal(start, goal, goalRad);
 		RenderableString rs = null;
@@ -635,7 +653,7 @@ public class PotentialFields {
 				Thread.sleep(1000 / robotSpeed);
 			}
 			while (stop);
-			
+
 			boolean move = ArcPlanner ? rob.ArcMove() : rob.move(); // Move 1 step
 
 			// If robot has crashed:
@@ -656,24 +674,24 @@ public class PotentialFields {
 			gui.draw(path);
 			gui.draw(obstacles);
 			drawRobot(rob);
-			
+
 			// Draw movement arcs
 			if ( true /* ArcPlanner*/   ) {
 				drawArc(rob.getFirstArc(), Color.BLACK);
-                                  if (  !  ArcPlanner  &&  !arcs  )
-                                  {
-                                     
-                                    
-                                      MyArc  newArc =  new MyArc(rob. getSecondArc().p1 ,  rob. getThirdArc().p2  ,rob. getSecondArc().startHeading , true );
-                                     
-                                      
-                                      
-                                     drawArc(newArc  , Color.PINK   ); 
-                                  }
-                                  else {
-                                    drawArc(rob.getSecondArc(), Color.PINK);
-                                    drawArc(rob.getThirdArc(), Color.DARK_GRAY);
-                                  }
+				if (  !  ArcPlanner  &&  !arcs  )
+				{
+
+
+					MyArc  newArc =  new MyArc(rob. getSecondArc().p1 ,  rob. getThirdArc().p2  ,rob. getSecondArc().startHeading , true );
+
+
+
+					drawArc(newArc  , Color.PINK   );
+				}
+				else {
+					drawArc(rob.getSecondArc(), Color.PINK);
+					drawArc(rob.getThirdArc(), Color.DARK_GRAY);
+				}
 			}
 
 			// Print path length so far
@@ -706,10 +724,10 @@ public class PotentialFields {
 	private void drawArc(MyArc arc, Color c) {
 		if (arc != null)
 		{
-                    
-                 
+
+
 			RenderablePolyline polyline = arc.getRenderablePolyline(arcs);
-                        
+
 //			addVectorToLine(arc.getStartPoint(), polyline);
 //			addVectorToLine(arc.getEndPoint(), polyline);
 			polyline.setProperties(c, 5f);
@@ -718,9 +736,9 @@ public class PotentialFields {
 	}
 
 
-	
-	
-	
+
+
+
 	public void setButtons(boolean enabled) {
 		gui.setButtonEnabled(buttonId, enabled);
 		gui.setButtonEnabled(circleSId, enabled);
@@ -732,7 +750,7 @@ public class PotentialFields {
 		gui.setButtonEnabled(easyCourseId, enabled);
 		gui.setButtonEnabled(medCourseId, enabled);
 		gui.setButtonEnabled(hardCourseId, enabled);
-                gui.setButtonEnabled(newobsticalShape, enabled);
+		gui.setButtonEnabled(newobsticalShape, enabled);
 	}
 
 	/**
