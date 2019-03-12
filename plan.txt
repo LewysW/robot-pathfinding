@@ -1,0 +1,4 @@
+1. Change boolean for buttons in PotentialFields.java to enum so that one in three buttons can be enabled at a time.
+
+2. Look at move() and arcMove() functions. These are what get values to determine the path to the goal. Use
+the functions they called to write a new fracProgMove().
