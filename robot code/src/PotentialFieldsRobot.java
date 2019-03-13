@@ -177,36 +177,10 @@ public class PotentialFieldsRobot {
 
 	private double evalMoveFracProg(IntPoint point, IntPoint goal) {
 		ArcSet arcs = get3Arcs(point  ,false );
-		double goalDist = (arcs.firstArc.arcLength +arcs.secondArc.arcLength + arcs.thirdArc.arcLength - radius) / 100; // Everything is divided by 10 because otherwise the
-		// numbers get too big
-		double[] obsDists = new double[visibleObstacles.size()];
-		for (int i = 0; i < visibleObstacles.size(); i++) {
-			// Distance is set to 0 if it's closer than the radius to the obstacle
-			double distanceFromObstacle = distance(point, visibleObstacles.get(i)) - radius;
-			obsDists[i] = distanceFromObstacle <= 0 ? 0 : distanceFromObstacle / 100;
-		}
-		// Calculate field power - x^2 so value gets small as distance decreases
-		double goalField = Math.pow(goalDist, 2);
 
-
-
-		// obsField power is sum of all obstacles, and gets v. large as distance
-		// decreases and vice versa
-		double obsPotential = 0;
-		for (int i = 0; i < visibleObstacles.size(); i++) {
-			if (obsDists[i] <= 0) {
-				obsPotential = Double.MAX_VALUE;
-				break;
-			} else if (obsDists[i] > sensorRange) {
-				continue;
-			}
-			obsPotential += Math.pow(Math.E, -1 / ((sensorRange) - obsDists[i])) / (obsDists[i]);
-		}
-
-
-		//double totalScore =10*goalField + Math.pow(2*radius,2)*4750*obsField / (sensorDensity*sensorRange);
+		System.out.println("Moving using Fractional Progress");
 		double p = arcs.firstArc.arcLength;
-		double f = arcs.secondArc.arcLength + arcs.thirdArc.arcLength + obsPotential;
+		double f = arcs.secondArc.arcLength + arcs.thirdArc.arcLength + getObstaclePotential(point);
 		double totalScore;
 		//totalScore = f / p + f;
 		totalScore = p / p + f;
