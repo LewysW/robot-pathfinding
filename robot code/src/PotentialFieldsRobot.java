@@ -133,6 +133,83 @@ public class PotentialFieldsRobot {
 	}
 
 	/**
+	 * Fractional progress function
+	 * @return
+	 */
+	public boolean fracProgMove() {
+		IntPoint moveTo = evaluateSamplePointsArc(); // Pick a sample point to move towards
+		if (moveTo == null)
+			return false;
+		setArcs(get3Arcs(moveTo  ,  true ));
+		Vector robotPos = new Vector(coords.x, coords.y);
+		Vector samplePos = new Vector(moveTo.x, moveTo.y);
+
+		double theta = Calculator.getTheta(heading, robotPos, samplePos);
+
+		Vector chord = samplePos.diff(robotPos);
+		double chordLength = chord.getMagnitude();
+		double curvature = Calculator.getCurvature(theta, chordLength);
+		double arcLength = Calculator.getArcLength(theta, curvature ,chordLength   );
+		double headingChange =  getHeadingChangeInterval(theta, arcLength);
+
+
+
+		moveTowards(heading + headingChange);
+		return true;
+	}
+
+	private IntPoint evaluateSamplePointsFracProg() {
+		List<IntPoint> moves = getSamplePoints();
+		// If there's no moves that doesn't go through obstacles, quit
+		if (moves.isEmpty()) {
+			return null;
+		}
+		// Value of moves is a function of distance from goal & distance from detected objects
+		double[] moveValues = new double[moves.size()];
+		for (int i = 0; i < moves.size(); i++) {
+			moveValues[i] = evalMoveFracProg(moves.get(i), this.goal);
+
+		}
+
+
+		return moves.get(minIndex(moveValues)); // Return the lowest valued move
+	}
+
+	private double evalMoveFracProg(IntPoint p, IntPoint goal) {
+		ArcSet arcs = get3Arcs(p  ,false );
+		double goalDist = (arcs.firstArc.arcLength +arcs.secondArc.arcLength + arcs.thirdArc.arcLength - radius) / 100; // Everything is divided by 10 because otherwise the
+		// numbers get too big
+		double[] obsDists = new double[visibleObstacles.size()];
+		for (int i = 0; i < visibleObstacles.size(); i++) {
+			// Distance is set to 0 if it's closer than the radius to the obstacle
+			double distanceFromObstacle = distance(p, visibleObstacles.get(i)) - radius;
+			obsDists[i] = distanceFromObstacle <= 0 ? 0 : distanceFromObstacle / 100;
+		}
+		// Calculate field power - x^2 so value gets small as distance decreases
+		double goalField = Math.pow(goalDist, 2);
+
+
+
+		// obsField power is sum of all obstacles, and gets v. large as distance
+		// decreases and vice versa
+		double obsField = 0;
+		for (int i = 0; i < visibleObstacles.size(); i++) {
+			if (obsDists[i] <= 0) {
+				obsField = Double.MAX_VALUE;
+				break;
+			} else if (obsDists[i] > sensorRange) {
+				continue;
+			}
+			obsField += Math.pow(Math.E, -1 / ((sensorRange) - obsDists[i])) / (obsDists[i]);
+		}
+
+
+		double totalScore =10*goalField + Math.pow(2*radius,2)*4750*obsField / (sensorDensity*sensorRange);
+
+		return totalScore;
+	}
+
+	/**
 	 * Creates a 3 arcs system.
 	 * 
 	 * @param moveTo sample point we want to move to

@@ -1,4 +1,9 @@
-1. Change boolean for buttons in PotentialFields.java to enum so that one in three buttons can be enabled at a time.
+1. Change boolean for buttons in PotentialFields.java to enum so that one in three buttons can be enabled at a time. [DONE]
 
-2. Look at move() and arcMove() functions. These are what get values to determine the path to the goal. Use
-the functions they called to write a new fracProgMove().
+2. Look at move() (euclidean distance) and arcMove() (arc) functions. Write equivalent fracProgrMove() function [Done]
+
+3.. Within fracProgMove() function, need to call evaluateSamplePointsFracProg() similar to evaluateSamplePointsArc() for Arc and evaluateSamplePoints() for Euclidean.
+
+4. Within evaluateSamplePointsFracProg() function need to call evalMoveFracProg() function, similar to evalMoveArc() for Arc (from evaluateSamplePointsArc()) and evalMove() for Euclidean (from evaluateSamplePoints())
+
+SUMMARY OF FUNCTIONS REQUIRED (Moving down the call stack): fracProgMove() -> evaluateSamplePointsFracProg() -> evalMoveFracProg()  

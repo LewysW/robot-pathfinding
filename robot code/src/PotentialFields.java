@@ -686,7 +686,7 @@ public class PotentialFields {
 			} else if (pathFindingAlgorithm == EUCLIDEAN_MODE) {
 				move = rob.move();
 			} else {
-				move = rob.ArcMove();
+				move = rob.fracProgMove();
 			}
 
 			//boolean move = ArcPlanner ? rob.ArcMove() : rob.move(); // Move 1 step
