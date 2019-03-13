@@ -7,9 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ca674b5e-e6c8-49d2-b911-d7155d3f8a01" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../plan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../plan.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/PotentialFields.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PotentialFields.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PotentialFieldsRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PotentialFieldsRobot.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
@@ -34,7 +32,7 @@
         <entry file="file://$PROJECT_DIR$/src/PotentialFields.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="329">
-              <caret line="688" column="41" selection-start-line="688" selection-start-column="41" selection-end-line="688" selection-end-column="41" />
+              <caret line="688" column="31" lean-forward="true" selection-start-line="688" selection-start-column="31" selection-end-line="688" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -42,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/PotentialFieldsRobot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="169" column="45" selection-start-line="169" selection-start-column="45" selection-end-line="169" selection-end-column="45" />
+            <state relative-caret-position="472">
+              <caret line="210" column="33" lean-forward="true" selection-start-line="210" selection-start-column="33" selection-end-line="210" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -76,8 +74,8 @@
       <find>evaluateSamplePoints</find>
       <find>evaluateSamplePoin</find>
       <find>evalMoveA</find>
-      <find>rob.</find>
       <find>getSample</find>
+      <find>rob.</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -155,7 +153,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552487973606" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552493194567" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -278,14 +276,14 @@
     <entry file="file://$PROJECT_DIR$/src/PotentialFields.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="329">
-          <caret line="688" column="41" selection-start-line="688" selection-start-column="41" selection-end-line="688" selection-end-column="41" />
+          <caret line="688" column="31" lean-forward="true" selection-start-line="688" selection-start-column="31" selection-end-line="688" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PotentialFieldsRobot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="169" column="45" selection-start-line="169" selection-start-column="45" selection-end-line="169" selection-end-column="45" />
+        <state relative-caret-position="472">
+          <caret line="210" column="33" lean-forward="true" selection-start-line="210" selection-start-column="33" selection-end-line="210" selection-end-column="33" />
         </state>
       </provider>
     </entry>

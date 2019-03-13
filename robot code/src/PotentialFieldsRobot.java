@@ -137,7 +137,7 @@ public class PotentialFieldsRobot {
 	 * @return
 	 */
 	public boolean fracProgMove() {
-		IntPoint moveTo = evaluateSamplePointsArc(); // Pick a sample point to move towards
+		IntPoint moveTo = evaluateSamplePointsFracProg(); // Pick a sample point to move towards
 		if (moveTo == null)
 			return false;
 		setArcs(get3Arcs(moveTo  ,  true ));
@@ -175,14 +175,14 @@ public class PotentialFieldsRobot {
 		return moves.get(minIndex(moveValues)); // Return the lowest valued move
 	}
 
-	private double evalMoveFracProg(IntPoint p, IntPoint goal) {
-		ArcSet arcs = get3Arcs(p  ,false );
+	private double evalMoveFracProg(IntPoint point, IntPoint goal) {
+		ArcSet arcs = get3Arcs(point  ,false );
 		double goalDist = (arcs.firstArc.arcLength +arcs.secondArc.arcLength + arcs.thirdArc.arcLength - radius) / 100; // Everything is divided by 10 because otherwise the
 		// numbers get too big
 		double[] obsDists = new double[visibleObstacles.size()];
 		for (int i = 0; i < visibleObstacles.size(); i++) {
 			// Distance is set to 0 if it's closer than the radius to the obstacle
-			double distanceFromObstacle = distance(p, visibleObstacles.get(i)) - radius;
+			double distanceFromObstacle = distance(point, visibleObstacles.get(i)) - radius;
 			obsDists[i] = distanceFromObstacle <= 0 ? 0 : distanceFromObstacle / 100;
 		}
 		// Calculate field power - x^2 so value gets small as distance decreases
@@ -192,19 +192,24 @@ public class PotentialFieldsRobot {
 
 		// obsField power is sum of all obstacles, and gets v. large as distance
 		// decreases and vice versa
-		double obsField = 0;
+		double obsPotential = 0;
 		for (int i = 0; i < visibleObstacles.size(); i++) {
 			if (obsDists[i] <= 0) {
-				obsField = Double.MAX_VALUE;
+				obsPotential = Double.MAX_VALUE;
 				break;
 			} else if (obsDists[i] > sensorRange) {
 				continue;
 			}
-			obsField += Math.pow(Math.E, -1 / ((sensorRange) - obsDists[i])) / (obsDists[i]);
+			obsPotential += Math.pow(Math.E, -1 / ((sensorRange) - obsDists[i])) / (obsDists[i]);
 		}
 
 
-		double totalScore =10*goalField + Math.pow(2*radius,2)*4750*obsField / (sensorDensity*sensorRange);
+		//double totalScore =10*goalField + Math.pow(2*radius,2)*4750*obsField / (sensorDensity*sensorRange);
+		double p = arcs.firstArc.arcLength;
+		double f = arcs.secondArc.arcLength + arcs.thirdArc.arcLength + obsPotential;
+		double totalScore;
+		//totalScore = f / p + f;
+		totalScore = p / p + f;
 
 		return totalScore;
 	}
