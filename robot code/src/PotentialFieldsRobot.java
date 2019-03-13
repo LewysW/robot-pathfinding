@@ -182,6 +182,8 @@ public class PotentialFieldsRobot {
 		double p = arcs.firstArc.arcLength;
 		double f = arcs.secondArc.arcLength + arcs.thirdArc.arcLength + getObstaclePotential(point);
 		double totalScore;
+
+		//Calculates fractinoal progress as a function of the past and future
 		//totalScore = f / p + f;
 		totalScore = p / p + f;
 

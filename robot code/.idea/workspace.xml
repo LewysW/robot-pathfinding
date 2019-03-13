@@ -7,7 +7,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ca674b5e-e6c8-49d2-b911-d7155d3f8a01" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PotentialFieldsRobot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PotentialFieldsRobot.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/bin/" />
@@ -40,8 +39,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/PotentialFieldsRobot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="180" column="60" selection-start-line="180" selection-start-column="60" selection-end-line="180" selection-end-column="60" />
+            <state relative-caret-position="3494">
+              <caret line="496" column="44" lean-forward="true" selection-start-line="496" selection-start-column="44" selection-end-line="496" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -76,6 +75,8 @@
       <find>evalMoveA</find>
       <find>getSample</find>
       <find>rob.</find>
+      <find>radius</find>
+      <find>getObst</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -153,7 +154,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552493550883" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1552509376286" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -282,8 +283,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/PotentialFieldsRobot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="180" column="60" selection-start-line="180" selection-start-column="60" selection-end-line="180" selection-end-column="60" />
+        <state relative-caret-position="3494">
+          <caret line="496" column="44" lean-forward="true" selection-start-line="496" selection-start-column="44" selection-end-line="496" selection-end-column="44" />
         </state>
       </provider>
     </entry>
