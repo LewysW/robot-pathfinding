@@ -22,7 +22,7 @@ public class PotentialFields {
 	private  EasyGui newGUI  ;
 
 	private final int buttonId;
-	private  int buttonIdNEW ;
+	private int buttonIdNEW;
 	private  int  x1newID ,   x2newID , x3newID, x4newID , x5newID;
 	private  int  y1newID ,   y2newID , y3newID, y4newID , y5newID;
 	private int  messageLabel ;
@@ -42,8 +42,11 @@ public class PotentialFields {
 	private final int disMikeId;
 	private final int enArcDrawingId;
 	private final int disArcDrawingId;
-	private final int enArcId;
-	private final int disArcId;
+
+
+	private final int arcButton;
+	private final int euclideanButton;
+	private final int fracProgButton ;
 	//private final int powerId;
 	//private final int goalId;
 	//private final int boxId;
@@ -59,7 +62,11 @@ public class PotentialFields {
 	private final int robotSpeedId;
 	private boolean arcs;
 	private boolean mike;
-	private boolean ArcPlanner ;
+	private int pathFindingAlgorithm;
+
+	private final int ARC_MODE = 0;
+	private final int EUCLIDEAN_MODE = 1;
+	private final int FRAC_PROG_MODE = 2;
 
 	/**
 	 * FRACTIONAL PROGRESS
@@ -118,12 +125,15 @@ public class PotentialFields {
 		gui.addLabel(0, 8, "Robot Speed (moves/second):");
 		robotSpeedId = gui.addTextField(0, 9, null);
 
+		/**
+		 * Changed button names to make code more readable.
+		 */
 		gui.addLabel(7, 2, "Plannar: ");
-		enArcId = gui.addButton(7, 3, "Arc", this, "enableArc");
-		disArcId = gui.addButton(7, 4, "Euclidean", this, "disableArc");
-		buttonIdNEW = gui.addButton(7, 5, "Fractional Progress", this, "enableFractionalProgress");
-		gui.setButtonEnabled(disArcId, false);
-		ArcPlanner = false;
+		arcButton = gui.addButton(7, 3, "Arc", this, "enableArc");
+		euclideanButton = gui.addButton(7, 4, "Euclidean", this, "enableEuclidean");
+		fracProgButton = gui.addButton(7, 5, "Fractional Progress", this, "enableFractionalProgress");
+		gui.setButtonEnabled(arcButton, false);
+		pathFindingAlgorithm = ARC_MODE;
 
 		// More options
 		gui.addLabel(7, 5, "Arc drawing: ");
@@ -218,28 +228,41 @@ public class PotentialFields {
 
 
 	public void enableArc() {
-		setArcPlanner(true);
+		setPathfindingAlgorithm(ARC_MODE);
 	}
 
-	public void disableArc() {
-		setArcPlanner(false);
+	public void enableEuclidean() {
+		setPathfindingAlgorithm(EUCLIDEAN_MODE);
 	}
 
 	public void enableFractionalProgress() {
-		setFractionalProgress(false);
+		setPathfindingAlgorithm(FRAC_PROG_MODE);
 	}
 
-	private void setArcPlanner(boolean planar) {
-		this.ArcPlanner = planar;
-		gui.setButtonEnabled(enArcId, !planar);
-		gui.setButtonEnabled(disArcId, planar);
-	}
+	/**
+	 * Changes between Arc mode, Euclidean mode, or fractional progress mode.
+	 * @param planar
+	 */
+	private void setPathfindingAlgorithm(int planar) {
+		this.pathFindingAlgorithm = planar;
 
-	private void setFractionalProgress(boolean planar) {
-		this.fractionalProgress = planar;
-		gui.setButtonEnabled(buttonIdNEW, planar);
-		gui.setButtonEnabled(enArcId, false);
-		gui.setButtonEnabled(disArcId, false);
+		if (planar == ARC_MODE) {
+			System.out.println("Arc Mode");
+			gui.setButtonEnabled(arcButton, false);
+			gui.setButtonEnabled(euclideanButton, true);
+			gui.setButtonEnabled(fracProgButton, true);
+		} else if (planar == EUCLIDEAN_MODE) {
+			System.out.println("Euclidean Mode");
+			gui.setButtonEnabled(arcButton, true);
+			gui.setButtonEnabled(euclideanButton, false);
+			gui.setButtonEnabled(fracProgButton, true);
+		} else if (planar == FRAC_PROG_MODE) {
+			System.out.println("Fractional Progress Mode");
+			gui.setButtonEnabled(arcButton, true);
+			gui.setButtonEnabled(euclideanButton, true);
+			gui.setButtonEnabled(fracProgButton, false);
+		}
+
 	}
 
 	/**
@@ -654,7 +677,19 @@ public class PotentialFields {
 			}
 			while (stop);
 
-			boolean move = ArcPlanner ? rob.ArcMove() : rob.move(); // Move 1 step
+			boolean move;
+
+			//Move 1 step
+			//Moves one way if set to ARC_MODE, another if set to EUCLIDEAN_MODE, and another if set to FRAC_PROG mode
+			if (pathFindingAlgorithm == ARC_MODE) {
+				move = rob.ArcMove();
+			} else if (pathFindingAlgorithm == EUCLIDEAN_MODE) {
+				move = rob.move();
+			} else {
+				move = rob.ArcMove();
+			}
+
+			//boolean move = ArcPlanner ? rob.ArcMove() : rob.move(); // Move 1 step
 
 			// If robot has crashed:
 			if (!move) {
@@ -678,7 +713,7 @@ public class PotentialFields {
 			// Draw movement arcs
 			if ( true /* ArcPlanner*/   ) {
 				drawArc(rob.getFirstArc(), Color.BLACK);
-				if (  !  ArcPlanner  &&  !arcs  )
+				if (  !  (pathFindingAlgorithm == EUCLIDEAN_MODE)  &&  !arcs  )
 				{
 
 
