@@ -177,15 +177,12 @@ public class PotentialFieldsRobot {
 
 	private double evalMoveFracProg(IntPoint point, IntPoint goal) {
 		ArcSet arcs = get3Arcs(point  ,false );
-
-		System.out.println("Moving using Fractional Progress");
 		double p = arcs.firstArc.arcLength;
 		double f = arcs.secondArc.arcLength + arcs.thirdArc.arcLength + getObstaclePotential(point);
 		double totalScore;
 
 		//Calculates fractinoal progress as a function of the past and future
-		//totalScore = f / p + f;
-		totalScore = p / p + f;
+		totalScore = f / (p + f);
 
 		return totalScore;
 	}
