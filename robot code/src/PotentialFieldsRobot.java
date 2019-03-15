@@ -117,7 +117,7 @@ public class PotentialFieldsRobot {
 		if (currentHeading != heading) {
 			currentHeading = heading;
 			numHeadingChanges++;
-			System.out.println(numHeadingChanges);
+			System.out.println("Num Turns: " + numHeadingChanges);
 		}
 
 		IntPoint moveTo = evaluateSamplePointsArc(); // Pick a sample point to move towards
@@ -151,7 +151,7 @@ public class PotentialFieldsRobot {
 		if (currentHeading != heading) {
 			currentHeading = heading;
 			numHeadingChanges++;
-			System.out.println(numHeadingChanges);
+			System.out.println("Num Turns: " + numHeadingChanges);
 		}
 
 		IntPoint moveTo = evaluateSamplePointsFracProg(); // Pick a sample point to move towards
@@ -382,7 +382,7 @@ public class PotentialFieldsRobot {
 		if (currentHeading != heading) {
 			currentHeading = heading;
 			numHeadingChanges++;
-			System.out.println(numHeadingChanges);
+			System.out.println("Num Turns: " + numHeadingChanges);
 		}
 
 		IntPoint moveTo = evaluateSamplePoints(); // Pick a sample point to move towards
