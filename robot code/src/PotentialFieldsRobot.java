@@ -202,8 +202,8 @@ public class PotentialFieldsRobot {
 		}
 
 		//If number of obstacle points on
-		if (leftHandObsPoints > (0.5 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
-			MOVEMENT_MODE = OBSTACLE_ON_LEFT;
+		if (leftHandObsPoints > (0.35 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
+			//MOVEMENT_MODE = OBSTACLE_ON_LEFT;
 			System.out.println("LEFT");
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
 			for (int i = middle + 1; i < moves.size(); i++) {
@@ -213,7 +213,7 @@ public class PotentialFieldsRobot {
 			}
 
 			return moves.get(moves.size() - 1);
-		} else if (rightHandObsPoints > (0.5 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
+		} else if (rightHandObsPoints > (0.35 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
 			System.out.println("RIGHT");
 			System.out.println(moves.get(middle - 1));
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
