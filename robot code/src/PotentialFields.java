@@ -669,9 +669,11 @@ public class PotentialFields {
 		drawRobot(rob);
 		gui.update();
 
+		int movesMade = 0;
 		int l = 0;
 		// Loop until the robot reaches the goal or gets stuck
 		while (!rob.inGoal()) {
+
 			do {
 				Thread.sleep(1000 / robotSpeed);
 			}
@@ -682,12 +684,17 @@ public class PotentialFields {
 			//Move 1 step
 			//Moves one way if set to ARC_MODE, another if set to EUCLIDEAN_MODE, and another if set to FRAC_PROG mode
 			if (pathFindingAlgorithm == ARC_MODE) {
+				movesMade++;
 				move = rob.ArcMove();
 			} else if (pathFindingAlgorithm == EUCLIDEAN_MODE) {
+				movesMade++;
 				move = rob.move();
 			} else {
+				movesMade++;
 				move = rob.fracProgMove();
 			}
+
+			System.out.println("Moves made: " + movesMade);
 
 			//boolean move = ArcPlanner ? rob.ArcMove() : rob.move(); // Move 1 step
 

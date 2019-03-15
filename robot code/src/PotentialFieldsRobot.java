@@ -18,6 +18,11 @@ public class PotentialFieldsRobot {
 	
 	// Robot:
 	private IntPoint coords; // Position of robot
+
+	//USED TO MEASURE NUMBER OF TURNS
+	private static double currentHeading = 0;
+	private static int numHeadingChanges = 0;
+
 	private double heading; // Robot's heading in radians
 	private final int radius; // Size of the robot (Our robot is a circle)
 	private  int stepSize = 10; // How far the robot moves each step, in pixels
@@ -109,6 +114,12 @@ public class PotentialFieldsRobot {
 	 * @return True if the move is successful, false if there are no viable moves.
 	 **/
 	public boolean ArcMove () {
+		if (currentHeading != heading) {
+			currentHeading = heading;
+			numHeadingChanges++;
+			System.out.println(numHeadingChanges);
+		}
+
 		IntPoint moveTo = evaluateSamplePointsArc(); // Pick a sample point to move towards
 		if (moveTo == null)
 			return false;
@@ -137,6 +148,12 @@ public class PotentialFieldsRobot {
 	 * @return
 	 */
 	public boolean fracProgMove() {
+		if (currentHeading != heading) {
+			currentHeading = heading;
+			numHeadingChanges++;
+			System.out.println(numHeadingChanges);
+		}
+
 		IntPoint moveTo = evaluateSamplePointsFracProg(); // Pick a sample point to move towards
 		if (moveTo == null)
 			return false;
@@ -362,6 +379,12 @@ public class PotentialFieldsRobot {
 	 * @return True if the move is successful, false if there are no viable moves.
 	 **/
 	public boolean move () {
+		if (currentHeading != heading) {
+			currentHeading = heading;
+			numHeadingChanges++;
+			System.out.println(numHeadingChanges);
+		}
+
 		IntPoint moveTo = evaluateSamplePoints(); // Pick a sample point to move towards
 		if (moveTo == null)
 			return false;
