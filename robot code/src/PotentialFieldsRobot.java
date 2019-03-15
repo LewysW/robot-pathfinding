@@ -27,7 +27,7 @@ public class PotentialFieldsRobot {
 	private final int OBSTACLE_ON_LEFT = 1;
 	private final int OBSTACLE_ON_RIGHT = 2;
 	private int MOVEMENT_MODE = FRACTIONAL_PROGRESS;
-	private final int POTENTIAL_THRESHOLD = 70;
+	private final int POTENTIAL_THRESHOLD = 100;
 
 
 	private double heading; // Robot's heading in radians
@@ -202,8 +202,7 @@ public class PotentialFieldsRobot {
 		}
 
 		//If number of obstacle points on
-		if (leftHandObsPoints > (0.35 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
-			//MOVEMENT_MODE = OBSTACLE_ON_LEFT;
+		if (leftHandObsPoints > (0.35 * moves.size() / 2)) {
 			System.out.println("LEFT");
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
 			for (int i = middle + 1; i < moves.size(); i++) {
@@ -213,7 +212,7 @@ public class PotentialFieldsRobot {
 			}
 
 			return moves.get(moves.size() - 1);
-		} else if (rightHandObsPoints > (0.35 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
+		} else if (rightHandObsPoints > (0.35 * moves.size() / 2)) {
 			System.out.println("RIGHT");
 			System.out.println(moves.get(middle - 1));
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
