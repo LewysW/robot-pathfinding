@@ -243,6 +243,7 @@ public class PotentialFieldsRobot {
 				}
 			}
 
+			unwind = false;
 			MOVEMENT_MODE = FRACTIONAL_PROGRESS;
 			System.out.println("FRAC PROG");
 			// Value of moves is a function of distance from goal & distance from detected objects
