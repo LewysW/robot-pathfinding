@@ -23,6 +23,13 @@ public class PotentialFieldsRobot {
 	private static double currentHeading = 0;
 	private static int numHeadingChanges = 0;
 
+	private final int FRACTIONAL_PROGRESS = 0;
+	private final int OBSTACLE_ON_LEFT = 1;
+	private final int OBSTACLE_ON_RIGHT = 2;
+	private int MOVEMENT_MODE = FRACTIONAL_PROGRESS;
+	private final int POTENTIAL_THRESHOLD = 70;
+
+
 	private double heading; // Robot's heading in radians
 	private final int radius; // Size of the robot (Our robot is a circle)
 	private  int stepSize = 10; // How far the robot moves each step, in pixels
@@ -181,15 +188,55 @@ public class PotentialFieldsRobot {
 		if (moves.isEmpty()) {
 			return null;
 		}
-		// Value of moves is a function of distance from goal & distance from detected objects
-		double[] moveValues = new double[moves.size()];
-		for (int i = 0; i < moves.size(); i++) {
-			moveValues[i] = evalMoveFracProg(moves.get(i), this.goal);
 
+		int leftHandObsPoints = 0;
+		int rightHandObsPoints = 0;
+		int middle = moves.size() / 2;
+
+		for (int i = 0; i < moves.size(); i++) {
+			if (i < middle && getObstaclePotential(moves.get(i)) > POTENTIAL_THRESHOLD) {
+				leftHandObsPoints++;
+			} else if (i > middle && getObstaclePotential(moves.get(i)) > POTENTIAL_THRESHOLD) {
+				rightHandObsPoints++;
+			}
 		}
 
+		//If number of obstacle points on
+		if (leftHandObsPoints > (0.5 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
+			MOVEMENT_MODE = OBSTACLE_ON_LEFT;
+			System.out.println("LEFT");
+			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
+			for (int i = middle + 1; i < moves.size(); i++) {
+				if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
+					return moves.get(i);
+				}
+			}
 
-		return moves.get(minIndex(moveValues)); // Return the lowest valued move
+			return moves.get(moves.size() - 1);
+		} else if (rightHandObsPoints > (0.5 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
+			System.out.println("RIGHT");
+			System.out.println(moves.get(middle - 1));
+			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
+
+			for (int i = middle - 1; i >= 0; i--) {
+				if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
+					return moves.get(i);
+				}
+			}
+
+			return moves.get(0);
+		} else {
+			System.out.println("FRAC PROG");
+			// Value of moves is a function of distance from goal & distance from detected objects
+			double[] moveValues = new double[moves.size()];
+			for (int i = 0; i < moves.size(); i++) {
+				moveValues[i] = evalMoveFracProg(moves.get(i), this.goal);
+
+			}
+
+			return moves.get(minIndex(moveValues)); // Return the lowest valued move
+		}
+
 	}
 
 	private double evalMoveFracProg(IntPoint point, IntPoint goal) {
