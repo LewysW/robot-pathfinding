@@ -44,6 +44,10 @@ public class PotentialFields {
 	private final int disArcDrawingId;
 
 
+	/**
+	 * CS3105 Submission 15/03/2019:
+	 * Changed button handling variables from booleans to integers to allow for three values
+	 */
 	private final int arcButton;
 	private final int euclideanButton;
 	private final int fracProgButton ;
@@ -126,7 +130,8 @@ public class PotentialFields {
 		robotSpeedId = gui.addTextField(0, 9, null);
 
 		/**
-		 * Changed button names to make code more readable.
+		 * CS3105 Submission 15/03/2019:
+		 * Changed button names to be more readable and added fractional progress button
 		 */
 		gui.addLabel(7, 2, "Plannar: ");
 		arcButton = gui.addButton(7, 3, "Arc", this, "enableArc");
@@ -240,8 +245,9 @@ public class PotentialFields {
 	}
 
 	/**
-	 * Changes between Arc mode, Euclidean mode, or fractional progress mode.
-	 * @param planar
+	 * CS3105 Submission 15/03/2019:
+	 * Function switches between Arc mode, Euclidean mode, and Fractional progress mode and disables/enables
+	 * the appropriate buttons.
 	 */
 	private void setPathfindingAlgorithm(int planar) {
 		this.pathFindingAlgorithm = planar;
@@ -681,8 +687,11 @@ public class PotentialFields {
 
 			boolean move;
 
-			//Move 1 step
-			//Moves one way if set to ARC_MODE, another if set to EUCLIDEAN_MODE, and another if set to FRAC_PROG mode
+
+			/**
+			 * CS3105 Submission 15/03/2019:
+			 * Calls appropriate move function base on the enabled path finding algorithm
+			 */
 			if (pathFindingAlgorithm == ARC_MODE) {
 				movesMade++;
 				move = rob.ArcMove();

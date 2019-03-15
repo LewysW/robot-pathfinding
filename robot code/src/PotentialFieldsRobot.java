@@ -23,6 +23,10 @@ public class PotentialFieldsRobot {
 	private static double currentHeading = 0;
 	private static int numHeadingChanges = 0;
 
+	/**
+	 * CS3105 Submission 15/03/2019:
+	 * Added values for use in heuristic for deciding between winding/unwinding vs fractional progress
+	 */
 	private final int FRACTIONAL_PROGRESS = 0;
 	private final int OBSTACLE_ON_LEFT = 1;
 	private final int OBSTACLE_ON_RIGHT = 2;
@@ -153,8 +157,10 @@ public class PotentialFieldsRobot {
 	}
 
 	/**
-	 * Fractional progress function
-	 * @return
+	 * CS3105 Submission 15/03/2019:
+	 * Fractional progress move function which is called to move the robot when the fractional progress heuristic
+	 * is enabled
+	 * @return true if there is a point to return, false otherwise
 	 */
 	public boolean fracProgMove() {
 		if (currentHeading != heading) {
@@ -184,6 +190,12 @@ public class PotentialFieldsRobot {
 		return true;
 	}
 
+	/**
+	 * CS3105 Submission 15/03/2019:
+	 * Gets the best sample point based on either finding the minimum point returned by fractional progress
+	 * or by determining whether to wind/unwind
+	 * @return - point to move to
+	 */
 	private IntPoint evaluateSamplePointsFracProg() {
 		List<IntPoint> moves = getSamplePoints();
 		// If there's no moves that doesn't go through obstacles, quit
@@ -191,14 +203,19 @@ public class PotentialFieldsRobot {
 			return null;
 		}
 
+		//Keeps a track of how many points are in range of an obstacle on both sides of the robot
 		int leftHandObsPoints = 0;
 		int rightHandObsPoints = 0;
+
+		//Keeps track of middle index in sensor
 		int middle = moves.size() / 2;
 
+		//Initialises local minimum to current position of robot
 		if (localMinimum == null) {
 			localMinimum = this.coords;
 		}
 
+		//Determine how many points on either side of the robot have an obstacle potential above a certain threshold
 		for (int i = 0; i < moves.size(); i++) {
 			if (i < middle && getObstaclePotential(moves.get(i)) > POTENTIAL_THRESHOLD) {
 				leftHandObsPoints++;
@@ -207,26 +224,34 @@ public class PotentialFieldsRobot {
 			}
 		}
 
-		//If number of obstacle points on
+		//If number of points on the left hand side with a sufficient obstacle potential exceed some percentage
 		if (leftHandObsPoints > (0.325 * moves.size() / 2)) {
+			//Sets the current movement mode
 			MOVEMENT_MODE = OBSTACLE_ON_LEFT;
+			//Set the local minimum to the current coordinates
 			localMinimum = coords;
-			unwind = true;
-			System.out.println("LEFT");
-			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
 
+			//Tell program that it needs to unwind at some point
+			unwind = true;
+
+			//Hug left wall and return lowest angle point in right hand direction
 			return hugLeft(moves, middle);
+			//If number of points on the right hand side with a sufficient obstacle potential exceed some percentage
 		} else if (rightHandObsPoints > (0.325 * moves.size() / 2)) {
+			//Sets the current movement mode
 			MOVEMENT_MODE = OBSTACLE_ON_RIGHT;
+			//Set the local minimum to the current coordinates
 			localMinimum = coords;
-			unwind = true;
-			System.out.println("RIGHT");
-			System.out.println(moves.get(middle - 1));
-			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
 
+			//Tell program that it needs to unwind at some point
+			unwind = true;
+
+			//Hug right wall and return lowest angle point in left hand direction
 			return hugRight(moves, middle);
 		} else {
-			//TODO NEED TO UNWIND WHEN REACHED
+			//If the distance from the local minimum to the goal is still less than the distance from the robot to the goal
+			//try to unwind:
+
 			if (distance(localMinimum, goal) < distance(coords, goal) && unwind) {
 				if (MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
 					for (int i = moves.size() - 1; i > middle; i++) {
@@ -243,9 +268,11 @@ public class PotentialFieldsRobot {
 				}
 			}
 
+			//Reset whether to unwind
 			unwind = false;
+
+			//Return to fractional progress mode:
 			MOVEMENT_MODE = FRACTIONAL_PROGRESS;
-			System.out.println("FRAC PROG");
 			// Value of moves is a function of distance from goal & distance from detected objects
 			double[] moveValues = new double[moves.size()];
 			for (int i = 0; i < moves.size(); i++) {
@@ -258,6 +285,14 @@ public class PotentialFieldsRobot {
 
 	}
 
+
+	/**
+	 * CS3105 Submission 15/03/2019
+	 * Winds appropriately given an obstacle on the right hand side of the robot
+	 * @param moves - list of points to move to
+	 * @param middle - middle index of points
+	 * @return - point to move to
+	 */
 	private IntPoint hugRight(List<IntPoint> moves, int middle) {
 		for (int i = middle + 1; i < moves.size(); i++) {
 			if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
@@ -268,6 +303,13 @@ public class PotentialFieldsRobot {
 		return moves.get(middle);
 	}
 
+	/**
+	 * CS3105 Submission 15/03/2019
+	 * Winds appropriately given an obstacle on the left hand side of the robot
+	 * @param moves - list of points to move to
+	 * @param middle - middle index of points
+	 * @return - point to move to
+	 */
 	private IntPoint hugLeft(List<IntPoint> moves, int middle) {
 		for (int i = middle - 1; i >= 0; i--) {
 			if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
@@ -278,13 +320,20 @@ public class PotentialFieldsRobot {
 		return moves.get(middle);
 	}
 
+	/**
+	 * CS3105 Submission: 15/03/2019
+	 * Generates a score based on the obstacle potential of a point in the robots sensor
+	 * @param point - to evaluate fractional potential of
+	 * @param goal - to incorporate potential of into calculation
+	 * @return
+	 */
 	private double evalMoveFracProg(IntPoint point, IntPoint goal) {
 		ArcSet arcs = get3Arcs(point  ,false );
 		double p = arcs.firstArc.arcLength;
 		double f = arcs.secondArc.arcLength + arcs.thirdArc.arcLength + getObstaclePotential(point);
 		double totalScore;
 
-		//Calculates fractinoal progress as a function of the past and future
+		//Calculates fractional progress as a function of the past and future
 		totalScore = f / (p + f);
 
 		return totalScore;
