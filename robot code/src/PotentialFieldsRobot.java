@@ -29,6 +29,7 @@ public class PotentialFieldsRobot {
 	private int MOVEMENT_MODE = FRACTIONAL_PROGRESS;
 	private final int POTENTIAL_THRESHOLD = 100;
 	private IntPoint localMinimum = null;
+	private boolean unwind = false;
 
 
 	private double heading; // Robot's heading in radians
@@ -207,16 +208,18 @@ public class PotentialFieldsRobot {
 		}
 
 		//If number of obstacle points on
-		if (leftHandObsPoints > (0.35 * moves.size() / 2)) {
+		if (leftHandObsPoints > (0.325 * moves.size() / 2)) {
 			MOVEMENT_MODE = OBSTACLE_ON_LEFT;
 			localMinimum = coords;
+			unwind = true;
 			System.out.println("LEFT");
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
 
 			return hugLeft(moves, middle);
-		} else if (rightHandObsPoints > (0.35 * moves.size() / 2)) {
+		} else if (rightHandObsPoints > (0.325 * moves.size() / 2)) {
 			MOVEMENT_MODE = OBSTACLE_ON_RIGHT;
 			localMinimum = coords;
+			unwind = true;
 			System.out.println("RIGHT");
 			System.out.println(moves.get(middle - 1));
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
@@ -224,7 +227,7 @@ public class PotentialFieldsRobot {
 			return hugRight(moves, middle);
 		} else {
 			//TODO NEED TO UNWIND WHEN REACHED
-			if (distance(localMinimum, goal) < distance(coords, goal)) {
+			if (distance(localMinimum, goal) < distance(coords, goal) && unwind) {
 				if (MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
 					for (int i = moves.size() - 1; i > middle; i++) {
 						if (getObstaclePotential(moves.get(i)) == 0) {
