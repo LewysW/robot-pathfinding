@@ -192,7 +192,6 @@ public class PotentialFieldsRobot {
 		int leftHandObsPoints = 0;
 		int rightHandObsPoints = 0;
 		int middle = moves.size() / 2;
-		IntPoint localMinima = this.coords;
 
 		for (int i = 0; i < moves.size(); i++) {
 			if (i < middle && getObstaclePotential(moves.get(i)) > POTENTIAL_THRESHOLD) {
@@ -202,17 +201,9 @@ public class PotentialFieldsRobot {
 			}
 		}
 
-		//If number of obstacle points on left hand side exceed a certain threshold
-		if (leftHandObsPoints > (0.35 * moves.size() / 2)) {
-			if (MOVEMENT_MODE != OBSTACLE_ON_LEFT || MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
-				MOVEMENT_MODE = OBSTACLE_ON_LEFT;
-				localMinima = this.coords;
-			} else if (MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
-				if (distance(localMinima, goal) > distance(this.coords, goal)) {
-					MOVEMENT_MODE = FRACTIONAL_PROGRESS;
-				}
-			}
-
+		//If number of obstacle points on
+		if (leftHandObsPoints > (0.35 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
+			//MOVEMENT_MODE = OBSTACLE_ON_LEFT;
 			System.out.println("LEFT");
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
 			for (int i = middle + 1; i < moves.size(); i++) {
@@ -223,15 +214,6 @@ public class PotentialFieldsRobot {
 
 			return moves.get(moves.size() - 1);
 		} else if (rightHandObsPoints > (0.35 * moves.size() / 2) || MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
-			if (MOVEMENT_MODE != OBSTACLE_ON_RIGHT) {
-				MOVEMENT_MODE = OBSTACLE_ON_RIGHT;
-				localMinima = this.coords;
-			} else if (MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
-				if (distance(localMinima, goal) > distance(this.coords, goal)) {
-					MOVEMENT_MODE = FRACTIONAL_PROGRESS;
-				}
-			}
-
 			System.out.println("RIGHT");
 			System.out.println(moves.get(middle - 1));
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
