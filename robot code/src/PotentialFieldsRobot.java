@@ -28,6 +28,7 @@ public class PotentialFieldsRobot {
 	private final int OBSTACLE_ON_RIGHT = 2;
 	private int MOVEMENT_MODE = FRACTIONAL_PROGRESS;
 	private final int POTENTIAL_THRESHOLD = 100;
+	private IntPoint localMinimum = null;
 
 
 	private double heading; // Robot's heading in radians
@@ -193,6 +194,10 @@ public class PotentialFieldsRobot {
 		int rightHandObsPoints = 0;
 		int middle = moves.size() / 2;
 
+		if (localMinimum == null) {
+			localMinimum = this.coords;
+		}
+
 		for (int i = 0; i < moves.size(); i++) {
 			if (i < middle && getObstaclePotential(moves.get(i)) > POTENTIAL_THRESHOLD) {
 				leftHandObsPoints++;
@@ -203,28 +208,39 @@ public class PotentialFieldsRobot {
 
 		//If number of obstacle points on
 		if (leftHandObsPoints > (0.35 * moves.size() / 2)) {
+			MOVEMENT_MODE = OBSTACLE_ON_LEFT;
+			localMinimum = coords;
 			System.out.println("LEFT");
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle + 1)));
-			for (int i = middle + 1; i < moves.size(); i++) {
-				if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
-					return moves.get(i);
-				}
-			}
 
-			return moves.get(moves.size() - 1);
+			return hugLeft(moves, middle);
 		} else if (rightHandObsPoints > (0.35 * moves.size() / 2)) {
+			MOVEMENT_MODE = OBSTACLE_ON_RIGHT;
+			localMinimum = coords;
 			System.out.println("RIGHT");
 			System.out.println(moves.get(middle - 1));
 			System.out.println("POTENTIAL: " + getObstaclePotential(moves.get(middle - 1)));
 
-			for (int i = middle - 1; i >= 0; i--) {
-				if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
-					return moves.get(i);
+			return hugRight(moves, middle);
+		} else {
+			//TODO NEED TO UNWIND WHEN REACHED
+			if (distance(localMinimum, goal) < distance(coords, goal)) {
+				if (MOVEMENT_MODE == OBSTACLE_ON_RIGHT) {
+					for (int i = moves.size() - 1; i > middle; i++) {
+						if (getObstaclePotential(moves.get(i)) == 0) {
+							return moves.get(i);
+						}
+					}
+				} else if (MOVEMENT_MODE == OBSTACLE_ON_LEFT) {
+					for (int i = 0; i < middle; i++) {
+						if (getObstaclePotential(moves.get(i)) == 0) {
+							return moves.get(i);
+						}
+					}
 				}
 			}
 
-			return moves.get(0);
-		} else {
+			MOVEMENT_MODE = FRACTIONAL_PROGRESS;
 			System.out.println("FRAC PROG");
 			// Value of moves is a function of distance from goal & distance from detected objects
 			double[] moveValues = new double[moves.size()];
@@ -236,6 +252,26 @@ public class PotentialFieldsRobot {
 			return moves.get(minIndex(moveValues)); // Return the lowest valued move
 		}
 
+	}
+
+	private IntPoint hugRight(List<IntPoint> moves, int middle) {
+		for (int i = middle + 1; i < moves.size(); i++) {
+			if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
+				return moves.get(i);
+			}
+		}
+
+		return moves.get(middle);
+	}
+
+	private IntPoint hugLeft(List<IntPoint> moves, int middle) {
+		for (int i = middle - 1; i >= 0; i--) {
+			if (getObstaclePotential(moves.get(i)) < POTENTIAL_THRESHOLD) {
+				return moves.get(i);
+			}
+		}
+
+		return moves.get(middle);
 	}
 
 	private double evalMoveFracProg(IntPoint point, IntPoint goal) {
